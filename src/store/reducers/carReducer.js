@@ -1,4 +1,5 @@
 import { BUY_ITEM, REMOVE_FEATURE } from '../actions/carActions'
+import { constants } from 'crypto';
 
 const initialState = {
     additionalPrice: 0,
@@ -20,6 +21,8 @@ const initialState = {
 console.log(initialState.additionalFeatures)
 
 export const carReducer = (state = initialState, action) => {
+
+  console.log(state.additionalFeatures.find(item => item.id === action.payload))
     switch (action.type){
         case BUY_ITEM:
           return {
@@ -32,7 +35,7 @@ export const carReducer = (state = initialState, action) => {
               ]
             },
             additionalFeatures: [...state.additionalFeatures.filter(item => item.id !== action.payload)],
-            additionalPrice: state.car.features.reduce((acc, cur) => {return acc + cur.price},0) + state.car.price
+            additionalPrice: state.additionalPrice + state.additionalFeatures.find(({id}) => id === action.payload).price
           }
         case REMOVE_FEATURE:
           return {
@@ -44,7 +47,8 @@ export const carReducer = (state = initialState, action) => {
             additionalFeatures: [
               ...state.additionalFeatures,
               ...state.car.features.filter(item => item.id === action.payload)
-            ]
+            ],
+            additionalPrice: state.additionalPrice - state.car.features.find(({id}) => id === action.payload).price
           }
         default: return state;
     }
